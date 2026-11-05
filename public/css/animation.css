@@ -1,0 +1,62 @@
+:root {
+    --electron-color: #00eaff;
+}
+
+.transition-effect {
+    animation: decadeTransition 0.7s ease;
+}
+
+@keyframes decadeTransition {
+
+    0% {
+        opacity: 0.4;
+        filter: brightness(0.5);
+        transform: scale(0.98);
+    }
+
+    50% {
+        opacity: 0.8;
+        filter: brightness(2);
+        transform: scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        filter: brightness(1);
+        transform: scale(1);
+    }
+}
+
+#particleCanvas {
+    transition: filter 0.5s ease;
+}
+
+.primary-button {
+    animation: buttonGlow 2s infinite alternate;
+}
+
+@keyframes buttonGlow {
+
+    from {
+        box-shadow: 0 0 5px #00eaff;
+    }
+
+    to {
+        box-shadow: 0 0 20px #00eaff;
+    }
+}
+
+.game-screen h2 {
+    animation: textGlow 2s infinite alternate;
+}
+
+@keyframes textGlow {
+
+    from {
+        text-shadow: 0 0 5px #00eaff;
+    }
+
+    to {
+        text-shadow: 0 0 20px #00eaff;
+    }
+}

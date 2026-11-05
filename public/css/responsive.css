@@ -1,0 +1,41 @@
+@media screen and (max-width: 1200px) {
+
+    .main-container {
+        padding: 20px;
+    }
+
+    .title-section h1 {
+        font-size: 30px;
+    }
+
+    .decade-list {
+        flex-wrap: wrap;
+    }
+
+    .decade-list button {
+        flex: 1 1 20%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .header {
+        padding: 15px;
+    }
+
+    .title-section h1 {
+        font-size: 23px;
+    }
+
+    .simulation-panel {
+        height: 300px;
+    }
+
+    .decade-list button {
+        flex: 1 1 40%;
+    }
+
+    .simulation-info {
+        font-size: 11px;
+    }
+}
