@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin</title>
+<style>
+  :root { --bg:#0b0f1a; --card:#131a2b; --line:#24304d; --txt:#e6edf7; --mut:#8a98b5; --acc:#00e5ff; --bad:#ff4d6d; --ok:#3ddc97; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:15px system-ui,sans-serif; padding:12px; }
+  h1 { font-size:18px; margin:0 0 10px; color:var(--acc); }
+  h2 { font-size:13px; margin:0 0 10px; color:var(--mut); text-transform:uppercase; letter-spacing:.08em; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  button { background:#1b2640; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:10px 14px; font-size:14px; cursor:pointer; }
+  button:active { background:var(--acc); color:#000; }
+  button.on { background:var(--acc); color:#000; border-color:var(--acc); }
+  button.danger { border-color:var(--bad); color:var(--bad); }
+  button.good { border-color:var(--ok); color:var(--ok); }
+  input[type=text], input[type=password], input[type=number] { background:#0b1222; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px; font-size:14px; min-width:0; }
+  input[type=text], input[type=password] { flex:1; }
+  .p { margin-bottom:14px; }
+  .p.auto { opacity:.55; }
+  .p .top { display:flex; justify-content:space-between; gap:8px; font-size:13px; color:var(--mut); margin-bottom:4px; }
+  .p .ctl { display:flex; gap:8px; align-items:center; }
+  .p input[type=range] { flex:1; accent-color:var(--acc); }
+  .p input[type=number] { width:110px; }
+  .clr { padding:2px 8px; font-size:12px; }
+  .tg { min-width:130px; }
+  #status { font-size:13px; } #status.ok { color:var(--ok); } #status.bad { color:var(--bad); }
+  #log { font:12px ui-monospace,monospace; color:var(--mut); max-height:160px; overflow:auto; white-space:pre-wrap; }
+  table { width:100%; border-collapse:collapse; font:12px ui-monospace,monospace; }
+  td,th { text-align:left; padding:4px 6px; border-bottom:1px solid var(--line); }
+  #login { max-width:360px; margin:20vh auto; }
+  #panel { display:none; max-width:760px; margin:0 auto; }
+  label.chk { display:flex; gap:8px; align-items:center; font-size:14px; }
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+  <h1>Admin</h1>
+  <div class="row">
+    <input id="token" type="password" placeholder="Token" autocomplete="off">
+    <button id="btnLogin">Vào</button>
+  </div>
+  <p id="loginErr" style="color:var(--bad);font-size:13px"></p>
+</div>
+
+<div id="panel">
+  <h1>Admin <span id="status" class="bad">●</span></h1>
+
+  <div class="card">
+    <h2>Ván chơi · <span id="phase">-</span></h2>
+    <div class="row">
+      <button data-cmd="start">▶ Bắt đầu</button>
+      <button data-cmd="pause">⏸ Tạm dừng</button>
+      <button data-cmd="resume">⏯ Tiếp tục</button>
+      <button data-cmd="reset">↺ Reset</button>
+      <button data-cmd="win" class="good">🏆 Cho thắng</button>
+      <button data-cmd="end" class="danger">💥 Cho thua</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Độ khó nhanh (ẩn với người chơi)</h2>
+    <div class="row">
+      <button id="pEasy" class="good">Dễ (dễ thắng)</button>
+      <button id="pHard" class="danger">Khó (dễ thua)</button>
+      <button id="pAuto">Về chuẩn của thập kỷ</button>
+    </div>
+    <p style="color:var(--mut);font-size:12px;margin:8px 0 0">Chỉ là một bộ giá trị đặt sẵn. Bạn vẫn chỉnh tay từng thông số bên dưới, và hai chế độ <b>Hỗ trợ kéo về tâm</b>, <b>Bất tử</b> giúp người chơi thắng; <b>Điều khiển trực tiếp</b> làm hạt đi theo góc nghiêng ngay lập tức.</p>
+  </div>
+
+  <div class="card">
+    <h2>Thập kỷ (ép cố định)</h2>
+    <div class="row" id="decades"></div>
+  </div>
+
+  <div class="card">
+    <h2>Thông số (kéo hoặc gõ số chính xác)</h2>
+    <div id="params"></div>
+  </div>
+
+  <div class="card">
+    <h2>Can thiệp trực tiếp</h2>
+    <div class="p" style="margin-bottom:10px">
+      <div class="top"><span>Lực xung kích</span><b id="impMagV">5</b></div>
+      <div class="ctl"><input type="range" id="impMag" min="1" max="10" step="0.5" value="5"></div>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <button data-imp="270">⬆</button><button data-imp="90">⬇</button>
+      <button data-imp="180">⬅</button><button data-imp="0">➡</button>
+      <button id="btnImpRand">🎲 Ngẫu nhiên</button>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <input id="announceTxt" type="text" placeholder="Thông báo lên màn hình chính (người chơi sẽ thấy)">
+      <button id="btnAnnounce">Gửi</button>
+    </div>
+    <div class="row" style="margin-bottom:10px"><button id="btnHaptic">📳 Rung tất cả điện thoại</button></div>
+    <label class="chk"><input type="checkbox" id="stealth"> Chế độ ẩn: không có hiệu ứng nào báo hiệu admin can thiệp (không chớp màn hình khi bắn xung lực)</label>
+  </div>
+
+  <div class="card">
+    <h2>Client đang kết nối (<span id="cnt">0</span>)</h2>
+    <table><thead><tr><th>Socket</th><th>Loại</th><th>Room</th><th>β</th><th>γ</th><th></th></tr></thead>
+    <tbody id="clients"></tbody></table>
+  </div>
+
+  <div class="card"><h2>Nhật ký</h2><div id="log"></div></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+let socket, schema = null, BOOLS = [];
+
+const LABELS = {
+  friction:'Hệ số giữ vận tốc/khung (thấp = ma sát lớn, 1 = không ma sát)',
+  mass:'Khối lượng m (khi tắt biến thiên)',
+  massVariable:'Khối lượng biến thiên (theo mức Bohr)',
+  bohrLevelVariable:'Mức Bohr đổi ngẫu nhiên',
+  noiseAmp:'Biên độ nhiễu nền',
+  shockFreq:'Xác suất xung kích/khung (0.015 ≈ 1 lần/giây)',
+  shockForceMin:'Lực xung kích tối thiểu', shockForceMax:'Lực xung kích tối đa',
+  shockDuration:'Thời gian mỗi xung (s)',
+  hasCenterBlackHole:'Hố đen trung tâm',
+  blackHoleRadius:'Bán kính hố đen', blackHoleStrength:'Lực hút hố đen',
+  coordRotationSpeed:'Tốc độ xoay hệ tọa độ (rad/khung, âm = xoay ngược)',
+  playerGain:'Độ nhạy người chơi (nhân thêm lực người chơi)',
+  directControl:'Điều khiển trực tiếp: hạt bám theo góc nghiêng, thả ra là dừng (0 = vật lý gốc, 1 = tối đa)',
+  centerAssist:'Hỗ trợ ngầm: kéo hạt về tâm (0 = tắt, 1 = rất mạnh)',
+  godMode:'Bất tử: chạm viền hoặc hố đen không thua',
+  emaAlpha:'EMA alpha (làm mượt cảm biến, ở server)'
+};
+const ALWAYS_SHOWN = ['emaAlpha', 'playerGain', 'directControl', 'centerAssist', 'godMode'];   // không thuộc preset thập kỷ
+const num = (v) => String(parseFloat((+v).toPrecision(7)));
+
+function connect(token) {
+  socket = io('/admin', { auth: { token } });
+  socket.on('connect_error', (e) => {
+    $('#loginErr').textContent = e.message === 'unauthorized' ? 'Sai token hoặc không được phép' : 'Không kết nối được';
+  });
+  socket.on('connect', () => {
+    sessionStorage.setItem('adminToken', token);
+    $('#login').style.display = 'none';
+    $('#panel').style.display = 'block';
+    $('#status').className = 'ok';
+  });
+  socket.on('disconnect', () => { $('#status').className = 'bad'; });
+  socket.on('state', render);
+  socket.on('monitor', renderClients);
+  socket.on('log', ({ t, msg }) => {
+    const el = $('#log');
+    el.textContent += new Date(t).toLocaleTimeString() + '  ' + msg + '\n';
+    el.scrollTop = el.scrollHeight;
+  });
+}
+
+function buildUI(s) {
+  schema = s.schema; BOOLS = s.bools || [];
+  $('#params').innerHTML = Object.entries(schema).map(([k, [min, max]]) => {
+    const head = `<div class="top"><span>${LABELS[k] || k}</span><button class="clr" data-clr="${k}" title="Về theo thập kỷ">↺</button></div>`;
+    const ctl = BOOLS.includes(k)
+      ? `<div class="ctl"><button class="tg" id="t_${k}">-</button></div>`
+      : `<div class="ctl"><input type="range" id="r_${k}" min="${min}" max="${max}" step="${(max - min) / 400}">
+         <input type="number" id="n_${k}" step="any" min="${min}" max="${max}" placeholder="auto"></div>`;
+    return `<div class="p" id="w_${k}">${head}${ctl}</div>`;
+  }).join('');
+
+  Object.entries(schema).forEach(([k, [min, max]]) => {
+    document.querySelector(`[data-clr="${k}"]`).onclick = () => socket.emit('clear_param', k);
+    if (BOOLS.includes(k)) {
+      $('#t_' + k).onclick = () => {
+        const cur = $('#t_' + k).dataset.on === '1';
+        socket.emit('set_params', { [k]: cur ? 0 : 1 });
+      };
+      return;
+    }
+    const r = $('#r_' + k), n = $('#n_' + k);
+    r.addEventListener('input', () => { n.value = num(r.value); socket.emit('set_params', { [k]: +r.value }); });
+    n.addEventListener('change', () => {
+      if (n.value === '') return;
+      const v = Math.min(max, Math.max(min, +n.value));
+      n.value = num(v); r.value = v;
+      socket.emit('set_params', { [k]: v });
+    });
+  });
+
+  $('#decades').innerHTML =
+    '<button data-dec="auto">Tự động</button>' +
+    [1,2,3,4,5,6,7].map((n) => `<button data-dec="${n}">TK${n}</button>`).join('');
+  document.querySelectorAll('[data-dec]').forEach((b) =>
+    b.onclick = () => socket.emit('set_decade', b.dataset.dec === 'auto' ? null : +b.dataset.dec));
+}
+
+function render(s) {
+  if (!schema) buildUI(s);
+  $('#phase').textContent = s.phase;
+  $('#stealth').checked = !!s.stealth;
+  const touched = s.touched || [];
+  Object.entries(s.params).forEach(([k, v]) => {
+    const on = touched.includes(k) || ALWAYS_SHOWN.includes(k);
+    $('#w_' + k).classList.toggle('auto', !on);
+    if (BOOLS.includes(k)) {
+      const t = $('#t_' + k);
+      t.dataset.on = (on && +v >= 0.5) ? '1' : '0';
+      t.textContent = !on ? 'theo thập kỷ' : (+v >= 0.5 ? 'BẬT' : 'TẮT');
+      t.classList.toggle('on', on && +v >= 0.5);
+      return;
+    }
+    const n = $('#n_' + k), r = $('#r_' + k);
+    if (document.activeElement !== n && document.activeElement !== r) {
+      n.value = on ? num(v) : '';
+      r.value = v;
+    }
+  });
+  document.querySelectorAll('[data-dec]').forEach((b) => {
+    const cur = s.decade == null ? 'auto' : String(s.decade);
+    b.classList.toggle('on', b.dataset.dec === cur);
+  });
+}
+
+function renderClients({ clients }) {
+  $('#cnt').textContent = clients.length;
+  const f = (x) => x == null ? '-' : (+x).toFixed(1);
+  $('#clients').innerHTML = clients.map((c) =>
+    `<tr><td>${c.id.slice(0, 6)}</td><td>${c.display ? 'display' : 'điện thoại'}</td><td>${c.rooms.join(',') || '-'}</td>
+     <td>${f(c.beta)}</td><td>${f(c.gamma)}</td>
+     <td><button class="danger clr" data-kick="${c.id}">Kick</button></td></tr>`).join('');
+  document.querySelectorAll('[data-kick]').forEach((b) =>
+    b.onclick = () => socket.emit('kick', b.dataset.kick));
+}
+
+$('#btnLogin').onclick = () => connect($('#token').value);
+$('#token').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btnLogin').click(); });
+document.querySelectorAll('[data-cmd]').forEach((b) => b.onclick = () => socket.emit('game_cmd', b.dataset.cmd));
+$('#pEasy').onclick = () => socket.emit('preset', 'easy');
+$('#pHard').onclick = () => socket.emit('preset', 'hard');
+$('#pAuto').onclick = () => socket.emit('reset_params');
+$('#stealth').onchange = (e) => socket.emit('set_stealth', e.target.checked);
+$('#impMag').oninput = (e) => $('#impMagV').textContent = e.target.value;
+document.querySelectorAll('[data-imp]').forEach((b) =>
+  b.onclick = () => socket.emit('impulse', { angle: +b.dataset.imp, magnitude: +$('#impMag').value }));
+$('#btnImpRand').onclick = () => socket.emit('impulse', { angle: Math.random() * 360, magnitude: +$('#impMag').value });
+$('#btnAnnounce').onclick = () => { socket.emit('announce', $('#announceTxt').value); $('#announceTxt').value = ''; };
+$('#btnHaptic').onclick = () => socket.emit('haptic', { pattern: [200, 100, 200] });
+
+const saved = sessionStorage.getItem('adminToken');
+if (saved) connect(saved);
+</script>
+</body>
+</html>
