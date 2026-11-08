@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin listener (công cụ test)</title>
+<style>
+  body { margin:0; padding:14px; background:#0b0f1a; color:#e6edf7; font:13px ui-monospace,monospace; }
+  h1 { font:600 16px system-ui,sans-serif; color:#0ff; margin:0 0 10px; }
+  #st { color:#f66; } #st.ok { color:#3ddc97; }
+  #log { white-space:pre-wrap; line-height:1.5; }
+  .ev { color:#ff0; }
+</style>
+</head>
+<body>
+<h1>Admin listener <span id="st">● chưa kết nối</span></h1>
+<p style="color:#8a98b5">Giả làm display/điện thoại: in ra mọi lệnh admin gửi. Dùng để test admin khi chưa có game.</p>
+<div id="log"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io('/ion-trap');
+const log = document.getElementById('log');
+const add = (ev, d) => {
+  log.insertAdjacentHTML('afterbegin',
+    `${new Date().toLocaleTimeString()}  <span class="ev">${ev}</span>  ${JSON.stringify(d)}\n`);
+};
+socket.on('connect', () => { socket.emit('admin_subscribe', ''); st.textContent = '● đã kết nối'; st.className = 'ok'; });
+socket.on('disconnect', () => { st.textContent = '● mất kết nối'; st.className = ''; });
+['admin_state', 'game_cmd', 'admin_impulse', 'announce', 'haptic'].forEach((ev) =>
+  socket.on(ev, (d) => add(ev, ev === 'admin_state' ? { phase: d.phase, decade: d.decade, touched: d.touched, params: d.params } : d)));
+</script>
+</body>
+</html>
