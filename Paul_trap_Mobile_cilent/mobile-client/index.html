@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PAUL TRAP // Bảng Điều Khiển Từ Trường</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Lớp hiệu ứng chớp viền khi va chạm hoặc qua bàn -->
+  <div id="haptic-flash-overlay" class="flash-overlay"></div>
+
+  <div class="cyber-container">
+    <!-- HEADER: Trạng thái kết nối & Chọn màn hình (Room) -->
+    <header class="cyber-header">
+      <div class="brand">
+        <span class="pulse-dot" id="conn-dot"></span>
+        <span class="brand-title">PAUL TRAP <small>MAG-CTRL v4.0</small></span>
+      </div>
+      <div class="room-selector">
+        <label for="room-select">MÀN HÌNH:</label>
+        <select id="room-select">
+          <option value="screen-1">TRẠM 01</option>
+          <option value="screen-2">TRẠM 02</option>
+          <option value="screen-3">TRẠM 03</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- THANH TRẠNG THÁI THẬP KỶ & NHIỆM VỤ (Đồng bộ Phần 2 & 3) -->
+    <section class="telemetry-bar">
+      <div class="telemetry-item">
+        <span class="label">TRẠNG THÁI</span>
+        <span class="value" id="game-phase-text">CHỜ KẾT NỐI</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="label">THẬP KỶ</span>
+        <span class="value neon-cyan" id="decade-text">1 / 7</span>
+      </div>
+      <div class="telemetry-item">
+        <span class="label">TẦN SỐ LUỒNG</span>
+        <span class="value neon-green" id="hz-counter">0 Hz</span>
+      </div>
+    </section>
+
+    <!-- KHU VỰC TRUNG TÂM: Ra-đa Vector Lực Từ Trường & Nút SẴN SÀNG -->
+    <main class="control-core">
+      <!-- Bàn điều khiển Radar Từ Trường -->
+      <div class="magnetic-radar" id="magnetic-radar">
+        <div class="radar-grid"></div>
+        <div class="radar-ring ring-outer"></div>
+        <div class="radar-ring ring-mid"></div>
+        <div class="radar-ring ring-inner"></div>
+        <div class="crosshair-x"></div>
+        <div class="crosshair-y"></div>
+
+        <!-- Mũi tên / Điểm hiển thị Vector lực 2D (X, Y) -->
+        <canvas id="vector-canvas" width="280" height="280"></canvas>
+        <div class="electron-puck" id="electron-puck"></div>
+      </div>
+
+      <!-- Lớp phủ Nút SẴN SÀNG To (Nhiệm vụ 1) -->
+      <div class="ready-overlay" id="ready-overlay">
+        <button id="btn-ready" class="btn-cyber-ready">
+          <span class="btn-glitch-text">SẴN SÀNG</span>
+          <span class="btn-subtext">CHẠM ĐỂ KÍCH HOẠT TỪ TRƯỜNG & CẢM BIẾN</span>
+        </button>
+      </div>
+
+      <!-- Lớp phủ Đếm ngược 3-2-1 (Đồng bộ Nhóm 3 - Nhiệm vụ 3) -->
+      <div class="countdown-overlay hidden" id="countdown-overlay">
+        <div class="countdown-number" id="countdown-number">3</div>
+        <div class="countdown-label">ĐỒNG BỘ BẪY ION...</div>
+      </div>
+    </main>
+
+    <!-- BẢNG THÔNG SỐ GÓC NGHIÊNG & VECTOR LỰC 2D (Nhiệm vụ 2) -->
+    <section class="sensor-readout">
+      <div class="readout-box">
+        <span class="r-label">VECTOR X</span>
+        <span class="r-val" id="val-vx">0.00</span>
+      </div>
+      <div class="readout-box">
+        <span class="r-label">VECTOR Y</span>
+        <span class="r-val" id="val-vy">0.00</span>
+      </div>
+      <div class="readout-box">
+        <span class="r-label">BETA (β)</span>
+        <span class="r-val" id="val-beta">0°</span>
+      </div>
+      <div class="readout-box">
+        <span class="r-label">GAMMA (γ)</span>
+        <span class="r-val" id="val-gamma">0°</span>
+      </div>
+    </section>
+
+    <!-- FOOTER: Nút Cân bằng góc 0 (Calibrate) & Chế độ giả lập cảm ứng -->
+    <footer class="cyber-footer">
+      <button id="btn-calibrate" class="btn-secondary">ĐẶT LẠI GÓC CÂN BẰNG (0,0)</button>
+      <button id="btn-test-haptic" class="btn-secondary">THỬ RUNG HAPTIC</button>
+    </footer>
+  </div>
+
+  <!-- Socket.io Client (Tự động lấy từ server hoặc CDN dự phòng) -->
+  <script src="/socket.io/socket.io.js" onerror="this.onerror=null;this.src='https://cdn.socket.io/4.7.5/socket.io.min.js';"></script>
+  <script src="js/config.js"></script>
+  <script src="js/haptics.js"></script>
+  <script src="js/sensor.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+/* ==========================================================================
+   PAUL TRAP - MOBILE MAGNETIC FIELD CONTROLLER (CYBERPUNK / SCI-FI THEME)
+   ========================================================================== */
+:root {
+  --bg-dark: #050811;
+  --bg-panel: rgba(10, 18, 36, 0.85);
+  --neon-cyan: #00f3ff;
+  --neon-magenta: #ff007f;
+  --neon-green: #00ff9d;
+  --neon-amber: #ffb800;
+  --neon-red: #ff2a54;
+  --text-main: #e2f1ff;
+  --text-dim: #6c8aa6;
+  --border-glow: 0 0 12px rgba(0, 243, 255, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  background-image:
+    radial-gradient(circle at 50% 45%, rgba(0, 243, 255, 0.08) 0%, transparent 65%),
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+  color: var(--text-main);
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, monospace;
+}
+
+.cyber-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100dvh;
+  padding: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+.cyber-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-panel);
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  border-radius: 8px;
+  box-shadow: var(--border-glow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--neon-amber);
+  box-shadow: 0 0 8px var(--neon-amber);
+}
+
+.pulse-dot.online {
+  background: var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green);
+}
+
+.brand-title {
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+  color: var(--neon-cyan);
+}
+
+.brand-title small {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  display: block;
+}
+
+.room-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.room-selector select {
+  background: #091326;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-weight: 700;
+  outline: none;
+}
+
+/* TELEMETRY BAR */
+.telemetry-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.telemetry-item {
+  background: var(--bg-panel);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 8px 6px;
+  text-align: center;
+}
+
+.telemetry-item .label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.telemetry-item .value {
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.neon-cyan { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0, 243, 255, 0.5); }
+.neon-green { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 157, 0.5); }
+
+/* CONTROL CORE & MAGNETIC RADAR */
+.control-core {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.magnetic-radar {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 243, 255, 0.12) 0%, rgba(5, 8, 17, 0.95) 75%);
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.3), inset 0 0 25px rgba(0, 243, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 243, 255, 0.3);
+  pointer-events: none;
+}
+
+.ring-outer { width: 85%; height: 85%; border-color: rgba(255, 0, 127, 0.4); }
+.ring-mid   { width: 60%; height: 60%; }
+.ring-inner { width: 30%; height: 30%; }
+
+.crosshair-x, .crosshair-y {
+  position: absolute;
+  background: rgba(0, 243, 255, 0.2);
+  pointer-events: none;
+}
+.crosshair-x { width: 100%; height: 1px; }
+.crosshair-y { width: 1px; height: 100%; }
+
+#vector-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.electron-puck {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px #ffffff, 0 0 24px var(--neon-cyan), 0 0 36px var(--neon-cyan);
+  transform: translate(0px, 0px);
+  pointer-events: none;
+  transition: transform 0.02s linear;
+}
+
+/* NÚT SẴN SÀNG TO (NHIỆM VỤ 1) */
+.ready-overlay, .countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 17, 0.78);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  z-index: 20;
+  padding: 20px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.btn-cyber-ready {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 243, 255, 0.25) 0%, rgba(10, 22, 48, 0.95) 80%);
+  border: 3px solid var(--neon-cyan);
+  color: #ffffff;
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.55), inset 0 0 25px rgba(0, 243, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  animation: pulseReady 1.8s infinite ease-in-out;
+  padding: 16px;
+}
+
+.btn-cyber-ready:active {
+  transform: scale(0.95);
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 40px var(--neon-magenta);
+}
+
+.btn-glitch-text {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 14px var(--neon-cyan);
+  margin-bottom: 10px;
+}
+
+.btn-subtext {
+  font-size: 0.72rem;
+  color: var(--text-main);
+  opacity: 0.85;
+  line-height: 1.35;
+}
+
+@keyframes pulseReady {
+  0%, 100% { box-shadow: 0 0 25px rgba(0, 243, 255, 0.45), inset 0 0 20px rgba(0, 243, 255, 0.25); }
+  50% { box-shadow: 0 0 45px rgba(0, 243, 255, 0.85), inset 0 0 35px rgba(0, 243, 255, 0.5); }
+}
+
+.countdown-number {
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: var(--neon-magenta);
+  text-shadow: 0 0 25px var(--neon-magenta);
+}
+
+.countdown-label {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: var(--neon-cyan);
+  margin-top: 8px;
+}
+
+/* SENSOR READOUT */
+.sensor-readout {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.readout-box {
+  background: var(--bg-panel);
+  border: 1px solid rgba(0, 243, 255, 0.25);
+  border-radius: 6px;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.r-label {
+  display: block;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+}
+
+.r-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  font-family: monospace;
+}
+
+/* FOOTER */
+.cyber-footer {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 10px 8px;
+  background: rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(0, 243, 255, 0.4);
+  border-radius: 6px;
+  color: var(--neon-cyan);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.btn-secondary:active {
+  background: rgba(0, 243, 255, 0.25);
+}
+
+/* HAPTIC VISUAL FLASH OVERLAY (NHIỆM VỤ 3) */
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.flash-overlay.flash-danger {
+  opacity: 1;
+  box-shadow: inset 0 0 65px var(--neon-red);
+  border: 3px solid var(--neon-red);
+}
+
+.flash-overlay.flash-levelup {
+  opacity: 1;
+  box-shadow: inset 0 0 65px var(--neon-green);
+  border: 3px solid var(--neon-green);
+}
