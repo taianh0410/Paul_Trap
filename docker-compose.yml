@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  ion-trap-server:
+    container_name: ion_trap_server
+    build: .
+    # Port mapping chuẩn cho Windows host: host:container
+    ports:
+      - "3000:3000"
+    # Tự động khởi động lại trừ khi bị dừng thủ công
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
