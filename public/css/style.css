@@ -57,6 +57,11 @@ body {
     font-size: 13px;
 }
 
+.connection[data-status="offline"] { color: #ff5577; }
+.connection[data-status="pending"] { color: #ffc857; }
+.connection[data-status="offline"] .status-dot { background: #ff5577; box-shadow: 0 0 12px #ff5577; }
+.connection[data-status="pending"] .status-dot { background: #ffc857; box-shadow: 0 0 12px #ffc857; }
+
 .status-dot {
     display: inline-block;
     width: 9px;
@@ -176,6 +181,10 @@ body {
     box-shadow: 0 0 15px #7928ca;
 }
 
+.decade-list button:disabled { cursor: default; opacity: .8; }
+.timeline-note { color: #94a3b8; margin-top: 12px; font-size: 12px; }
+#periodLabel { float: right; color: #00eaff; }
+
 .game-panel {
     margin-top: 25px;
     min-height: 210px;
@@ -208,8 +217,7 @@ body {
 
 .primary-button,
 .restartButton,
-#winButton,
-#loseButton {
+.room-form button {
     padding: 12px 25px;
     margin: 5px;
 
@@ -226,12 +234,18 @@ body {
 
 .primary-button:hover,
 .restartButton:hover,
-#winButton:hover,
-#loseButton:hover {
+.room-form button:hover {
     background: #00eaff;
     color: #050816;
     box-shadow: 0 0 20px #00eaff;
 }
+
+.primary-button:disabled { cursor: not-allowed; opacity: .45; animation: none; box-shadow: none; }
+.room-form { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 0 auto 10px; }
+.room-form label { color: #00eaff; font-size: 12px; letter-spacing: 1px; }
+.room-form input { width: 130px; padding: 10px; border: 1px solid #384b80; border-radius: 4px; background: #071329; color: white; text-transform: uppercase; }
+.phone-status { font-size: 12px; }
+#rewardName { color: #ffc857; }
 
 #countdownNumber {
     font-size: 90px;

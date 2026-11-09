@@ -1,34 +1,12 @@
-const GAME_STATE = {
-    WAITING: "waiting",
-    COUNTDOWN: "countdown",
-    PLAYING: "playing",
-    GAME_OVER: "game_over",
-    VICTORY: "victory"
-};
+window.GAME_STATE = Object.freeze({ WAITING: "waiting", COUNTDOWN: "countdown", PLAYING: "playing", GAME_OVER: "game_over", VICTORY: "victory", REWARD: "reward" });
 
-let currentState = GAME_STATE.WAITING;
+let currentState = window.GAME_STATE.WAITING;
+window.gameState = { get current() { return currentState; }, set: changeGameState };
 
-function changeGameState(newState) {
-
-    currentState = newState;
-
-    const screens = {
-        waiting: "waitingScreen",
-        countdown: "countdownScreen",
-        playing: "playingScreen",
-        game_over: "gameOverScreen",
-        victory: "victoryScreen"
-    };
-
-    // Ẩn tất cả màn hình
-    Object.values(screens).forEach(id => {
-        document.getElementById(id).classList.add("hidden");
-    });
-
-    // Hiện màn hình tương ứng
-    const screenId = screens[newState];
-
-    if (screenId) {
-        document.getElementById(screenId).classList.remove("hidden");
-    }
+function changeGameState(next) {
+    const screens = { waiting: "waitingScreen", countdown: "countdownScreen", playing: "playingScreen", game_over: "gameOverScreen", victory: "victoryScreen", reward: "rewardScreen" };
+    if (!screens[next]) return;
+    currentState = next;
+    Object.entries(screens).forEach(([state, id]) => document.getElementById(id)?.classList.toggle("hidden", state !== next));
+    window.dispatchEvent(new CustomEvent("game_state", { detail: next }));
 }

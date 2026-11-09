@@ -23,7 +23,7 @@
 
         <div class="connection">
             <span class="status-dot"></span>
-            SYSTEM ONLINE
+            <span id="connectionText">CONNECTING…</span>
         </div>
     </header>
 
@@ -45,6 +45,7 @@
                 <p>ENERGY: <span id="energy">12.5 eV</span></p>
                 <p>ORBIT: <span>STABLE</span></p>
                 <p>STATE: <span id="electronState">TRAPPED</span></p>
+                <p>POSITION: <span id="positionLabel">—</span></p>
             </div>
 
         </section>
@@ -52,18 +53,18 @@
         <!-- DECADE TIMELINE -->
         <section class="timeline-panel">
 
-            <h3>TIME PERIOD</h3>
+            <h3>TIME PERIOD <span id="periodLabel">1950s</span></h3>
 
             <div class="decade-list">
-                <button data-decade="1950">1950s</button>
-                <button data-decade="1960">1960s</button>
-                <button data-decade="1970">1970s</button>
-                <button data-decade="1980">1980s</button>
-                <button data-decade="1990">1990s</button>
-                <button data-decade="2000">2000s</button>
-                <button data-decade="2010">2010s</button>
-                <button data-decade="2020" class="active">2020s</button>
+                <button data-decade="1950" aria-label="1950s">1950s</button>
+                <button data-decade="1960" aria-label="1960s">1960s</button>
+                <button data-decade="1970" aria-label="1970s">1970s</button>
+                <button data-decade="1980" aria-label="1980s">1980s</button>
+                <button data-decade="1990" aria-label="1990s">1990s</button>
+                <button data-decade="2000" aria-label="2000s">2000s</button>
+                <button data-decade="2010" aria-label="2010s">2010s</button>
             </div>
+            <p class="timeline-note">Decades advance automatically as you complete each stage.</p>
 
         </section>
 
@@ -73,6 +74,12 @@
             <div id="waitingScreen" class="game-screen">
                 <h2>READY TO EXPLORE?</h2>
                 <p>ENTER THE WORLD OF QUANTUM PHYSICS</p>
+                <form id="roomForm" class="room-form">
+                    <label for="roomId">ROOM ID</label>
+                    <input id="roomId" maxlength="32" autocomplete="off" required>
+                    <button type="submit">JOIN ROOM</button>
+                </form>
+                <p id="phoneStatus" class="phone-status">Connect a phone to start.</p>
                 <button id="startButton" class="primary-button">
                     START GAME
                 </button>
@@ -85,10 +92,7 @@
 
             <div id="playingScreen" class="game-screen hidden">
                 <h2>SIMULATION ACTIVE</h2>
-                <p>THE ION TRAP IS RUNNING...</p>
-
-                <button id="winButton">TEST VICTORY</button>
-                <button id="loseButton">TEST GAME OVER</button>
+                <p>THE ION TRAP IS RUNNING... <span id="stageLabel">1950s</span></p>
             </div>
 
             <div id="gameOverScreen" class="game-screen hidden">
@@ -101,6 +105,14 @@
                 <h2>VICTORY</h2>
                 <p>MISSION COMPLETED</p>
                 <button class="restartButton">PLAY AGAIN</button>
+            </div>
+
+            <div id="rewardScreen" class="game-screen hidden">
+                <h2>STAGE COMPLETE</h2>
+                <p id="rewardPeriod">1950s complete</p>
+                <p>REWARD: <strong id="rewardName">Quantum Core</strong></p>
+                <button id="claimButton" class="primary-button">CLAIM &amp; CONTINUE</button>
+                <button id="continueButton" class="restartButton">CONTINUE WITHOUT REWARD</button>
             </div>
 
         </section>
@@ -125,6 +137,9 @@
 
 <!-- Socket Client -->
     <script src="js/socket-client.js"></script>
+
+<!-- Sensor driven physics -->
+    <script src="js/physics-engine.js"></script>
 
 <!-- Main Application -->
     <script src="js/main.js"></script>
